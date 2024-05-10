@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  a1:
+    image: alpine
+    container_name: a1
+    tty: true
+    networks:
+      - app-net
+
+  charts:
+    build:
+      context: ./charts
+      dockerfile: Dockerfile
+    container_name: charts-service
+    env_file:
+      - microservices.env
+    networks:
+      - backend
+
+  images:
+    build:
+      context: ./images
+      dockerfile: Dockerfile
+    container_name: images-service
+    env_file:
+      - microservices.env
+    networks:
+      - backend
+
+  search:
+    build:
+      context: ./search
+      dockerfile: Dockerfile
+    container_name: search-service
+    env_file:
+      - microservices.env
+    networks:
+      - backend
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: web-service
+    ports:
+      - "8080:8080"
+    networks:
+      - frontend
+      - backend
+
+networks:
+  app-net:
+    driver: bridge
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
